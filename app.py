@@ -1,0 +1,80 @@
+import streamlit as st
+import pandas as pd
+import joblib
+
+# Φόρτωση εκπαιδευμένου μοντέλου
+model = joblib.load("xgboost_model.pkl")
+
+st.set_page_config(page_title="Εκτίμηση Αποκατάστασης", layout="centered")
+st.title("🦴 Εκτίμηση Χρόνου Αποκατάστασης Κατάγματος Κερκίδας")
+
+# Είσοδοι Χρήστη
+age = st.number_input("Ηλικία", min_value=0, max_value=100, value=50)
+sex = st.selectbox("Φύλο", ["Άνδρας", "Γυναίκα"])
+treatment_type = st.selectbox("Τύπος Θεραπείας", ["Συντηρητική", "Χειρουργική"])
+early_physiotherapy = st.selectbox("Έγκαιρη Φυσικοθεραπεία;", ["Όχι", "Ναι"])
+osteoporosis = st.selectbox("Οστεοπόρωση;", ["Όχι", "Ναι"])
+diabetes = st.selectbox("Διαβήτης;", ["Όχι", "Ναι"])
+fracture_type = st.selectbox("Τύπος Κατάγματος", ["Απλό", "Σύνθετο", "Ενδοαρθρικό"])
+physio_sessions = st.number_input("Αριθμός Φυσικοθεραπειών", min_value=0, value=10)
+grip_strength_improvement = st.number_input("Βελτίωση Δύναμης Λαβής (%)", min_value=0.0, max_value=100.0, value=30.0)
+dash_score_6months = st.number_input("DASH Score (6 μήνες)", min_value=0.0, max_value=100.0, value=20.0)
+
+rom_extension_3m = st.number_input("ROM - Έκταση (3 μήνες)", min_value=0.0, value=45.0)
+rom_flexion_3m = st.number_input("ROM - Κάμψη (3 μήνες)", min_value=0.0, value=50.0)
+rom_supination_3m = st.number_input("ROM - Υπτιασμός (3 μήνες)", min_value=0.0, value=60.0)
+rom_pronation_3m = st.number_input("ROM - Πρηνισμός (3 μήνες)", min_value=0.0, value=55.0)
+
+# === Κωδικοποίηση Κατηγορικών Μεταβλητών ===
+sex_map = {"Άνδρας": 0, "Γυναίκα": 1}
+treatment_map = {"Συντηρητική": 0, "Χειρουργική": 1}
+physio_map = {"Όχι": 0, "Ναι": 1}
+fracture_map = {"Απλό": 0, "Σύνθετο": 1, "Ενδοαρθρικό": 2}
+
+# === Δημιουργία DataFrame με τις στήλες που έχουμε ===
+input_data = pd.DataFrame([[
+    age,
+    sex_map[sex],
+    treatment_map[treatment_type],
+    physio_map[early_physiotherapy],
+    physio_map[osteoporosis],
+    physio_map[diabetes],
+    fracture_map[fracture_type],
+    physio_sessions,
+    grip_strength_improvement,
+    dash_score_6months,
+    rom_extension_3m,
+    rom_flexion_3m,
+    rom_supination_3m,
+    rom_pronation_3m
+]], columns=[
+    'age',
+    'sex',
+    'treatment_type',
+    'early_physiotherapy',
+    'osteoporosis',
+    'diabetes',
+    'fracture_type',
+    'physio_sessions',
+    'grip_strength_improvement',
+    'dash_score_6months',
+    'rom_extension_3m',
+    'rom_flexion_3m',
+    'rom_supination_3m',
+    'rom_pronation_3m'
+])
+
+# === Συμπλήρωση υπολοίπων στηλών που περίμενε το μοντέλο ===
+model_features = model.get_booster().feature_names
+for col in model_features:
+    if col not in input_data.columns:
+        input_data[col] = 0  # Μηδενική τιμή για στήλες που αφαιρέθηκαν
+
+# === Αναδιάταξη των στηλών σύμφωνα με τη σειρά του μοντέλου ===
+input_data = input_data[model_features]
+
+# === Πρόβλεψη ===
+if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
+    prediction = model.predict(input_data)[0]
+    st.success(f"✅ Εκτιμώμενος χρόνος αποκατάστασης: **{prediction:.2f} εβδομάδες**")
+
