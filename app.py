@@ -8,7 +8,7 @@ model = joblib.load("xgboost_model.pkl")
 st.set_page_config(page_title="Εκτίμηση Αποκατάστασης", layout="centered")
 st.title("🦴 Εκτίμηση Χρόνου Αποκατάστασης Κατάγματος Κερκίδας")
 
-df = pd.read_csv("C:/Users/Fooula/Documents/1. ΠΤΥΧΙΑΚΗ/Dataset/distal_radius_recovery_rom_included.csv")
+df = pd.read_csv("distal_radius_recovery_rom_included.csv")
 X = df.drop(columns=["recovery_time_weeks"])
 y = df["recovery_time_weeks"]
 
