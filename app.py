@@ -8,6 +8,10 @@ model = joblib.load("xgboost_model.pkl")
 st.set_page_config(page_title="Εκτίμηση Αποκατάστασης", layout="centered")
 st.title("🦴 Εκτίμηση Χρόνου Αποκατάστασης Κατάγματος Κερκίδας")
 
+df = pd.read_csv("C:/Users/Fooula/Documents/1. ΠΤΥΧΙΑΚΗ/Dataset/distal_radius_recovery_rom_included.csv")
+X = df.drop(columns=["recovery_time_weeks"])
+y = df["recovery_time_weeks"]
+
 # Είσοδοι Χρήστη
 age = st.number_input("Ηλικία", min_value=0, max_value=100, value=50)
 sex = st.selectbox("Φύλο", ["Άνδρας", "Γυναίκα"])
@@ -78,3 +82,5 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     prediction = model.predict(input_data)[0]
     st.success(f"✅ Εκτιμώμενος χρόνος αποκατάστασης: **{prediction:.2f} εβδομάδες**")
 
+mean_recovery = y.mean()
+st.write(f"Μέσος Χρόνος Αποκατάστασης στο Dataset: {mean_recovery:.2f} εβδομάδες")
