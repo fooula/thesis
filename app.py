@@ -89,7 +89,7 @@ st.write(f"Μέσος Χρόνος Αποκατάστασης στο Dataset: {m
 
 
 # Επιλογή χαρακτηριστικών που θέλεις να συγκρίνεις
-features_to_plot = [
+radar_features = [
     'age',
     'physio_sessions',
     'grip_strength_improvement',
