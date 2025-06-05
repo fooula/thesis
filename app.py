@@ -89,7 +89,9 @@ st.write(f"Μέσος Χρόνος Αποκατάστασης στο Dataset: {m
 
 
 # Επιλογή χαρακτηριστικών που θέλεις να συγκρίνεις
-radar_features = [
+features_to_plot = [
+    'age',
+    'physio_sessions',
     'grip_strength_improvement',
     'dash_score_6months',
     'rom_extension_3m',
@@ -97,6 +99,7 @@ radar_features = [
     'rom_supination_3m',
     'rom_pronation_3m'
 ]
+
 
 # Υπολογισμός μέσου όρου dataset
 average_values = df[radar_features].mean().tolist()
