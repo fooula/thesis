@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import plotly.graph_objects as go
+
 
 # Φόρτωση εκπαιδευμένου μοντέλου
 model = joblib.load("xgboost_model.pkl")
@@ -84,3 +86,47 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
 
 mean_recovery = y.mean()
 st.write(f"Μέσος Χρόνος Αποκατάστασης στο Dataset: {mean_recovery:.2f} εβδομάδες")
+
+
+# Επιλογή χαρακτηριστικών που θέλεις να συγκρίνεις
+radar_features = [
+    'grip_strength_improvement',
+    'dash_score_6months',
+    'rom_extension_3m',
+    'rom_flexion_3m',
+    'rom_supination_3m',
+    'rom_pronation_3m'
+]
+
+# Υπολογισμός μέσου όρου dataset
+average_values = df[radar_features].mean().tolist()
+
+# Ανάκτηση των τιμών του τρέχοντος ασθενούς
+patient_values = [input_data[feature] for feature in radar_features]
+
+# Δημιουργία radar chart
+fig = go.Figure()
+
+fig.add_trace(go.Scatterpolar(
+    r=average_values,
+    theta=radar_features,
+    fill='toself',
+    name='Μέσος Όρος'
+))
+
+fig.add_trace(go.Scatterpolar(
+    r=patient_values,
+    theta=radar_features,
+    fill='toself',
+    name='Ασθενής'
+))
+
+fig.update_layout(
+    polar=dict(
+        radialaxis=dict(visible=True),
+    ),
+    showlegend=True,
+    title='Σύγκριση Ασθενούς με Μέσο Όρο'
+)
+
+st.plotly_chart(fig)
