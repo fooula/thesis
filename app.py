@@ -171,11 +171,22 @@ input_data = pd.DataFrame([{
     "grip_strength_improvement": grip_strength_improvement,
 }])
 
-# Προεπεξεργασία ίδιου τύπου όπως στο αρχικό pipeline 
-input_processed = preprocessor.transform(input_data)
+# Προετοιμασία input_data ώστε να ταιριάζει με τις στήλες του μοντέλου
+input_data["sex"] = input_data["sex"].map(sex_map)
+input_data["treatment_type"] = input_data["treatment_type"].map(treatment_map)
+input_data["fracture_type"] = input_data["fracture_type"].map(fracture_map)
+
+# Προσθήκη μηδενικών σε features που λείπουν
+for col in model.get_booster().feature_names:
+    if col not in input_data.columns:
+        input_data[col] = 0
+
+# Αναδιάταξη στη σωστή σειρά
+input_data = input_data[model.get_booster().feature_names]
 
 # Πρόβλεψη
-predicted_weeks = best_model.predict(input_processed)[0]
+predicted_weeks = model.predict(input_data)[0]
+
 
 # Εμφάνιση πρόβλεψης
 st.success(f"📅 Εκτιμώμενος χρόνος αποκατάστασης: **{predicted_weeks:.1f} εβδομάδες**")
