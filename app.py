@@ -133,3 +133,49 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
+
+st.markdown("## 🧪 What-if Ανάλυση")
+st.markdown("Πειραματίσου με διαφορετικές τιμές για βασικές παραμέτρους και δες πώς επηρεάζεται η πρόβλεψη του μοντέλου.")
+
+# Τιμές για επιλογές
+sex_options = df['sex'].unique().tolist()
+fracture_options = df['fracture_type'].unique().tolist()
+treatment_options = df['treatment_type'].unique().tolist()
+
+# Sidebar ή κύριο UI
+col1, col2 = st.columns(2)
+
+with col1:
+    age = st.slider("Ηλικία", min_value=20, max_value=90, value=65)
+    grip_strength_improvement = st.slider("Βελτίωση δύναμης λαβής (%)", min_value=0, max_value=100, value=50)
+    physio_sessions = st.slider("Συνεδρίες φυσικοθεραπείας", min_value=0, max_value=50, value=20)
+
+with col2:
+    sex = st.selectbox("Φύλο", sex_options)
+    fracture_type = st.selectbox("Τύπος κατάγματος", fracture_options)
+    treatment_type = st.selectbox("Τύπος θεραπείας", treatment_options)
+    osteoporosis = st.radio("Οστεοπόρωση", [0, 1], format_func=lambda x: "Ναι" if x == 1 else "Όχι")
+    diabetes = st.radio("Διαβήτης", [0, 1], format_func=lambda x: "Ναι" if x == 1 else "Όχι")
+    early_physiotherapy = st.radio("Έγκαιρη φυσικοθεραπεία", [0, 1], format_func=lambda x: "Ναι" if x == 1 else "Όχι")
+
+# Δημιουργία input DataFrame
+input_data = pd.DataFrame([{
+    "age": age,
+    "sex": sex,
+    "treatment_type": treatment_type,
+    "early_physiotherapy": early_physiotherapy,
+    "osteoporosis": osteoporosis,
+    "diabetes": diabetes,
+    "fracture_type": fracture_type,
+    "physio_sessions": physio_sessions,
+    "grip_strength_improvement": grip_strength_improvement,
+}])
+
+# Προεπεξεργασία ίδιου τύπου όπως στο αρχικό pipeline 
+input_processed = preprocessor.transform(input_data)
+
+# Πρόβλεψη
+predicted_weeks = best_model.predict(input_processed)[0]
+
+# Εμφάνιση πρόβλεψης
+st.success(f"📅 Εκτιμώμενος χρόνος αποκατάστασης: **{predicted_weeks:.1f} εβδομάδες**")
