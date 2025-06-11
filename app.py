@@ -172,3 +172,37 @@ if st.button("📉 Σύγκριση με αρχική πρόβλεψη"):
     else:
         st.warning("⚠️ Παρακαλώ κάνε πρώτα την αρχική πρόβλεψη.")
 
+st.header("📈 Ανάλυση Υποομάδων Ασθενών")
+
+# Αντιστοιχία για εμφάνιση ονομάτων
+category_labels = {
+    'sex': {0: 'Άνδρας', 1: 'Γυναίκα'},
+    'osteoporosis': {0: 'Όχι', 1: 'Ναι'},
+    'diabetes': {0: 'Όχι', 1: 'Ναι'},
+    'treatment_type': {0: 'Συντηρητική', 1: 'Χειρουργική'},
+    'fracture_type': {0: 'Απλό', 1: 'Σύνθετο', 2: 'Ενδοαρθρικό'}
+}
+
+# Επιλογή μεταβλητής για υποομάδες
+selected_group = st.selectbox("Επιλέξτε Μεταβλητή για Ανάλυση Υποομάδων", 
+    ["sex", "osteoporosis", "diabetes", "treatment_type", "fracture_type"])
+
+# Υπολογισμός μέσου χρόνου αποκατάστασης ανά κατηγορία
+group_means = df.groupby(selected_group)["recovery_time_weeks"].mean().reset_index()
+group_means[selected_group] = group_means[selected_group].map(category_labels[selected_group])
+
+# Γράφημα bar
+fig_group = go.Figure()
+fig_group.add_trace(go.Bar(
+    x=group_means[selected_group],
+    y=group_means["recovery_time_weeks"],
+    marker_color="indianred"
+))
+
+fig_group.update_layout(
+    title="Μέσος Χρόνος Αποκατάστασης ανά Κατηγορία",
+    xaxis_title="Κατηγορία",
+    yaxis_title="Μέσος Χρόνος (εβδομάδες)"
+)
+
+st.plotly_chart(fig_group)
