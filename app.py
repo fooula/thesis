@@ -172,12 +172,10 @@ if st.button("📉 Σύγκριση με αρχική πρόβλεψη"):
     else:
         st.warning("⚠️ Παρακαλώ κάνε πρώτα την αρχική πρόβλεψη.")
 
-# === Ανάλυση Υποομάδων ===
 st.header("📊 Ανάλυση Υποομάδων")
 
 selected_group = st.selectbox("Επιλογή Μεταβλητής Υποομάδας", ["sex", "treatment_type", "early_physiotherapy", "osteoporosis", "diabetes", "fracture_type"])
 
-# Mapping για καλύτερες ετικέτες στο γράφημα
 category_labels = {
     "sex": {0: "Άνδρας", 1: "Γυναίκα"},
     "treatment_type": {0: "Συντηρητική", 1: "Χειρουργική"},
@@ -187,19 +185,46 @@ category_labels = {
     "fracture_type": {0: "Απλό", 1: "Σύνθετο", 2: "Ενδοαρθρικό"}
 }
 
-# Υπολογισμός μέσου χρόνου αποκατάστασης ανά ομάδα
+# === Debug ===
+st.write("🔍 Διαφορετικές τιμές:", selected_group, df[selected_group].unique())
+
+# === Έλεγχος στήλης ===
+if selected_group not in df.columns:
+    st.error(f"❌ Η στήλη '{selected_group}' δεν υπάρχει στο dataset.")
+    st.stop()
+
+if df[selected_group].isnull().all():
+    st.warning(f"⚠️ Όλα τα δεδομένα για '{selected_group}' είναι κενά.")
+    st.stop()
+
+# === Αντιμετώπιση τύπων ===
+# Αντικατάσταση string κατηγορικών τιμών με αριθμούς
+if selected_group == "sex":
+    df[selected_group] = df[selected_group].map({"male": 0, "female": 1})
+elif selected_group == "treatment_type":
+    df[selected_group] = df[selected_group].map({"Συντηρητική": 0, "Χειρουργική": 1})
+elif selected_group == "fracture_type":
+    df[selected_group] = df[selected_group].map({
+        "Απλό": 0, "Σύνθετο": 1, "Ενδοαρθρικό": 2
+    })
+
+# Μετατροπή σε int για ομοιομορφία
+df[selected_group] = df[selected_group].astype(int)
+
+
+# === Υπολογισμός μέσου χρόνου ===
 group_means = df.groupby(selected_group)["recovery_time_weeks"].mean().reset_index()
 
-# Αντικατάσταση αριθμητικών τιμών με ετικέτες
+# === Μετάφραση κατηγοριών ===
 if selected_group in category_labels:
     group_means[selected_group] = group_means[selected_group].map(category_labels[selected_group])
 
-# Δημιουργία ράβδων
+# === Γράφημα ===
 fig = go.Figure(data=[
     go.Bar(
         x=group_means[selected_group],
         y=group_means["recovery_time_weeks"],
-        marker_color='indianred'
+        marker_color='teal'
     )
 ])
 
@@ -210,4 +235,3 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
-
