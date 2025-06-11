@@ -82,7 +82,9 @@ input_data = input_data[model_features]
 # === Πρόβλεψη ===
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction = model.predict(input_data)[0]
+    st.session_state['initial_prediction'] = prediction
     st.success(f"✅ Εκτιμώμενος χρόνος αποκατάστασης: **{prediction:.2f} εβδομάδες**")
+
 
 mean_recovery = y.mean()
 st.write(f"Μέσος Χρόνος Αποκατάστασης στο Dataset: {mean_recovery:.2f} εβδομάδες")
@@ -141,13 +143,13 @@ st.subheader("🧪 What-if Ανάλυση")
 st.write("Πειραματίσου με διαφορετικές τιμές σε βασικές παραμέτρους για να δεις πώς επηρεάζεται ο χρόνος αποκατάστασης.")
 
 # Επιλογή τιμών για την what-if ανάλυση
-what_if_physio_sessions = st.slider("Τι αν ο ασθενής έκανε περισσότερες φυσικοθεραπείες;", 
+what_if_physio_sessions = st.slider("Τι θα γινοταν αν ο ασθενής έκανε περισσότερες φυσικοθεραπείες;", 
                                      min_value=0, max_value=50, value=int(physio_sessions))
 
-what_if_grip_strength = st.slider("Τι αν υπήρχε μεγαλύτερη βελτίωση δύναμης λαβής (%);", 
+what_if_grip_strength = st.slider("Τι θα γινοταν αν υπήρχε μεγαλύτερη βελτίωση δύναμης λαβής (%);", 
                                    min_value=0, max_value=100, value=int(grip_strength_improvement))
 
-what_if_dash_score = st.slider("Τι αν το DASH Score ήταν διαφορετικό;", 
+what_if_dash_score = st.slider("Τι θα γινοταν αν το DASH Score ήταν διαφορετικό;", 
                                 min_value=0, max_value=100, value=int(dash_score_6months))
 
 # Δημιουργία what-if input δεδομένων
@@ -163,6 +165,10 @@ st.info(f"📊 Εκτιμώμενος χρόνος αποκατάστασης μ
 
 
 if st.button("📉 Σύγκριση με αρχική πρόβλεψη"):
-    delta = what_if_prediction - prediction
-    sign = "αύξηση" if delta > 0 else "μείωση"
-    st.write(f"Η νέα πρόβλεψη δείχνει {abs(delta):.2f} εβδομάδες {sign} στον χρόνο αποκατάστασης.")
+    if 'initial_prediction' in st.session_state:
+        delta = what_if_prediction - st.session_state['initial_prediction']
+        sign = "αύξηση" if delta > 0 else "μείωση"
+        st.info(f"Η νέα πρόβλεψη δείχνει {abs(delta):.2f} εβδομάδες {sign} σε σχέση με την αρχική πρόβλεψη.")
+    else:
+        st.warning("⚠️ Παρακαλώ κάνε πρώτα την αρχική πρόβλεψη.")
+
