@@ -172,45 +172,42 @@ if st.button("📉 Σύγκριση με αρχική πρόβλεψη"):
     else:
         st.warning("⚠️ Παρακαλώ κάνε πρώτα την αρχική πρόβλεψη.")
 
-st.header("📈 Ανάλυση Υποομάδων Ασθενών")
+# === Ανάλυση Υποομάδων ===
+st.header("📊 Ανάλυση Υποομάδων")
 
-# Αντιστοιχία για εμφάνιση ονομάτων
+selected_group = st.selectbox("Επιλογή Μεταβλητής Υποομάδας", ["sex", "treatment_type", "early_physiotherapy", "osteoporosis", "diabetes", "fracture_type"])
+
+# Mapping για καλύτερες ετικέτες στο γράφημα
 category_labels = {
-    'sex': {0: 'Άνδρας', 1: 'Γυναίκα'},
-    'osteoporosis': {0: 'Όχι', 1: 'Ναι'},
-    'diabetes': {0: 'Όχι', 1: 'Ναι'},
-    'treatment_type': {0: 'Συντηρητική', 1: 'Χειρουργική'},
-    'fracture_type': {0: 'Απλό', 1: 'Σύνθετο', 2: 'Ενδοαρθρικό'}
+    "sex": {0: "Άνδρας", 1: "Γυναίκα"},
+    "treatment_type": {0: "Συντηρητική", 1: "Χειρουργική"},
+    "early_physiotherapy": {0: "Όχι", 1: "Ναι"},
+    "osteoporosis": {0: "Όχι", 1: "Ναι"},
+    "diabetes": {0: "Όχι", 1: "Ναι"},
+    "fracture_type": {0: "Απλό", 1: "Σύνθετο", 2: "Ενδοαρθρικό"}
 }
 
-# Επιλογή μεταβλητής για υποομάδες
-selected_group = st.selectbox("Επιλέξτε Μεταβλητή για Ανάλυση Υποομάδων", 
-    ["sex", "osteoporosis", "diabetes", "treatment_type", "fracture_type"])
-
-# Υπολογισμός μέσου χρόνου αποκατάστασης ανά κατηγορία
-# Υπολογισμός μέσου χρόνου αποκατάστασης ανά κατηγορία
+# Υπολογισμός μέσου χρόνου αποκατάστασης ανά ομάδα
 group_means = df.groupby(selected_group)["recovery_time_weeks"].mean().reset_index()
 
-if df[selected_group].dtype == 'object':
-    group_means[selected_group] = group_means[selected_group].astype(str)
-else:
+# Αντικατάσταση αριθμητικών τιμών με ετικέτες
+if selected_group in category_labels:
     group_means[selected_group] = group_means[selected_group].map(category_labels[selected_group])
 
+# Δημιουργία ράβδων
+fig = go.Figure(data=[
+    go.Bar(
+        x=group_means[selected_group],
+        y=group_means["recovery_time_weeks"],
+        marker_color='indianred'
+    )
+])
 
-
-
-# Γράφημα bar
-fig_group = go.Figure()
-fig_group.add_trace(go.Bar(
-    x=group_means[selected_group],
-    y=group_means["recovery_time_weeks"],
-    marker_color="indianred"
-))
-
-fig_group.update_layout(
-    title="Μέσος Χρόνος Αποκατάστασης ανά Κατηγορία",
-    xaxis_title="Κατηγορία",
-    yaxis_title="Μέσος Χρόνος (εβδομάδες)"
+fig.update_layout(
+    title=f"Μέσος Χρόνος Ανά Ομάδα για: {selected_group}",
+    xaxis_title=selected_group,
+    yaxis_title="Μέσος Χρόνος Αποκατάστασης (εβδομάδες)"
 )
 
-st.plotly_chart(fig_group)
+st.plotly_chart(fig)
+
