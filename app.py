@@ -188,8 +188,16 @@ selected_group = st.selectbox("Επιλέξτε Μεταβλητή για Ανά
     ["sex", "osteoporosis", "diabetes", "treatment_type", "fracture_type"])
 
 # Υπολογισμός μέσου χρόνου αποκατάστασης ανά κατηγορία
+# Υπολογισμός μέσου χρόνου αποκατάστασης ανά κατηγορία
 group_means = df.groupby(selected_group)["recovery_time_weeks"].mean().reset_index()
-group_means[selected_group] = group_means[selected_group].map(category_labels[selected_group])
+
+if df[selected_group].dtype == 'object':
+    group_means[selected_group] = group_means[selected_group].astype(str)
+else:
+    group_means[selected_group] = group_means[selected_group].map(category_labels[selected_group])
+
+
+
 
 # Γράφημα bar
 fig_group = go.Figure()
