@@ -133,3 +133,36 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig)
+
+
+st.markdown("---")
+st.subheader("🧪 What-if Ανάλυση")
+
+st.write("Πειραματίσου με διαφορετικές τιμές σε βασικές παραμέτρους για να δεις πώς επηρεάζεται ο χρόνος αποκατάστασης.")
+
+# Επιλογή τιμών για την what-if ανάλυση
+what_if_physio_sessions = st.slider("Τι αν ο ασθενής έκανε περισσότερες φυσικοθεραπείες;", 
+                                     min_value=0, max_value=50, value=int(physio_sessions))
+
+what_if_grip_strength = st.slider("Τι αν υπήρχε μεγαλύτερη βελτίωση δύναμης λαβής (%);", 
+                                   min_value=0, max_value=100, value=int(grip_strength_improvement))
+
+what_if_dash_score = st.slider("Τι αν το DASH Score ήταν διαφορετικό;", 
+                                min_value=0, max_value=100, value=int(dash_score_6months))
+
+# Δημιουργία what-if input δεδομένων
+what_if_input = input_data.copy()
+what_if_input["physio_sessions"] = what_if_physio_sessions
+what_if_input["grip_strength_improvement"] = what_if_grip_strength
+what_if_input["dash_score_6months"] = what_if_dash_score
+
+# What-if Πρόβλεψη
+what_if_prediction = model.predict(what_if_input)[0]
+
+st.info(f"📊 Εκτιμώμενος χρόνος αποκατάστασης με τις νέες τιμές: **{what_if_prediction:.2f} εβδομάδες**")
+
+
+if st.button("📉 Σύγκριση με αρχική πρόβλεψη"):
+    delta = what_if_prediction - prediction
+    sign = "αύξηση" if delta > 0 else "μείωση"
+    st.write(f"Η νέα πρόβλεψη δείχνει {abs(delta):.2f} εβδομάδες {sign} στον χρόνο αποκατάστασης.")
