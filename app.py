@@ -67,8 +67,13 @@ def user_input_features():
 # ----------------------------------------
 # Δημιουργία input dataframe από χρήστη
 # ----------------------------------------
-input_df = user_input_features()
 
+
+input_df = user_input_features()
+st.write("Model expects features:")
+st.write(model.get_booster().feature_names)
+st.write("Input DataFrame columns:")
+st.write(input_df.columns.tolist())
 # Διάταξη input_df με τα ίδια features όπως το μοντέλο
 model_features = model.get_booster().feature_names
 input_df = input_df[model_features]
