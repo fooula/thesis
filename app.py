@@ -185,8 +185,6 @@ category_labels = {
     "fracture_type": {0: "Απλό", 1: "Σύνθετο", 2: "Ενδοαρθρικό"}
 }
 
-# === Debug ===
-st.write("🔍 Διαφορετικές τιμές:", selected_group, df[selected_group].unique())
 
 # === Έλεγχος στήλης ===
 if selected_group not in df.columns:
