@@ -93,17 +93,31 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.legend()
     st.pyplot(fig)
 
-    # Σύγκριση με παρόμοιους
+    # Σύγκριση με παρόμοιους (με πιο ευέλικτα φίλτρα)
     st.markdown("### 🧍‍♂️ Συγκριτικά με Παρόμοιους Ασθενείς")
+
+    # Ορισμός ομοιότητας με βάρη (π.χ. ηλικία ±7, φύλο, θεραπεία)
     similar = df[
-        (df["sex"] == input_dict["sex"]) &
-        (df["treatment_type"] == input_dict["treatment_type"]) &
-        (df["fracture_type"] == input_dict["fracture_type"]) &
-        (abs(df["age"] - input_dict["age"]) <= 5)
+        (abs(df["age"] - input_dict["age"]) <= 7) &
+        (df["treatment_type"] == input_dict["treatment_type"])
     ]
-    if not similar.empty:
-        st.write(f"Βρέθηκαν {len(similar)} παρόμοιοι ασθενείς.")
-        st.write(f"📉 Μέσος χρόνος αποκατάστασης τους: **{similar['recovery_time_weeks'].mean():.1f} εβδομάδες**")
+
+    # Αν βρεθούν τουλάχιστον 5 παρόμοιοι
+    if not similar.empty and len(similar) >= 5:
+        mean_similar = similar["recovery_time_weeks"].mean()
+        st.success(f"Βρέθηκαν {len(similar)} παρόμοιοι ασθενείς.")
+        st.write(f"📉 Μέσος χρόνος αποκατάστασης τους: **{mean_similar:.1f} εβδομάδες**")
+
+        # Προαιρετικά: γράφημα για παρόμοιους
+        fig2, ax2 = plt.subplots()
+        sns.histplot(similar["recovery_time_weeks"], kde=True, bins=15, ax=ax2, color='lightcoral')
+        ax2.axvline(prediction_weeks, color='blue', linestyle='--', label='Η πρόβλεψή σας')
+        ax2.axvline(mean_similar, color='black', linestyle='--', label='Μέσος όρος παρόμοιων')
+        ax2.set_title("Κατανομή αποκατάστασης - Παρόμοιοι ασθενείς")
+        ax2.legend()
+        st.pyplot(fig2)
+
     else:
-        st.warning("Δεν βρέθηκαν παρόμοιοι ασθενείς για σύγκριση.")
+        st.warning("Δεν βρέθηκαν αρκετοί παρόμοιοι ασθενείς. Δοκίμασε με πιο γενικά χαρακτηριστικά ή μεγαλύτερο dataset.")
+
 
