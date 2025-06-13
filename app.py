@@ -4,13 +4,10 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Φόρτωση εκπαιδευμένου μοντέλου
+# Φόρτωση μοντέλου και δεδομένων
 model = joblib.load("xgboost_model.pkl")
-
-# Φόρτωση dataset για σύγκριση
 df = pd.read_csv("distal_radius_recovery.csv")
 
-# Τα χαρακτηριστικά που περιμένει το μοντέλο
 model_features = [
     "age", "sex", "treatment_type", "early_physiotherapy", "osteoporosis",
     "diabetes", "fracture_type", "physio_sessions", "grip_strength_improvement",
@@ -22,32 +19,57 @@ model_features = [
 
 st.title("🦴 Πρόβλεψη Χρόνου Αποκατάστασης Κατάγματος Κερκίδας")
 
+# Επιλογή τύπου χρήστη
+user_type = st.sidebar.selectbox("Επιλέξτε Χρήστη", ["Ασθενής", "Γιατρός / Ειδικός"])
+
 st.sidebar.header("🔢 Εισαγωγή στοιχείων ασθενούς")
 
-# Εισαγωγή χαρακτηριστικών
+# Πεδία που θα εμφανίζονται σε όλους
 age = st.sidebar.number_input("Ηλικία", min_value=18, max_value=100, value=50)
 sex = st.sidebar.selectbox("Φύλο", ["Άνδρας", "Γυναίκα"])
 treatment_type = st.sidebar.selectbox("Τύπος θεραπείας", ["Συντηρητική", "Χειρουργική"])
 early_physiotherapy = st.sidebar.selectbox("Έναρξη φυσιοθεραπείας εντός 2 εβδομάδων;", ["Όχι", "Ναι"])
-osteoporosis = st.sidebar.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
-diabetes = st.sidebar.selectbox("Σακχαρώδης Διαβήτης", ["Όχι", "Ναι"])
-fracture_type = st.sidebar.selectbox("Τύπος κατάγματος", ["Απλό", "Σύνθετο"])
-physio_sessions = st.sidebar.number_input("Αριθμός συνεδριών φυσιοθεραπείας", min_value=0, max_value=100, value=20)
-grip_strength_improvement = st.sidebar.slider("Βελτίωση δύναμης λαβής (%)", 0, 100, 50)
-dash_score_6months = st.sidebar.slider("DASH score στους 6 μήνες", 0, 100, 40)
-rom_extension_3m = st.sidebar.slider("ROM έκτασης (3μ)", 0, 180, 160)
-rom_flexion_3m = st.sidebar.slider("ROM κάμψης (3μ)", 0, 180, 150)
-rom_supination_3m = st.sidebar.slider("ROM υπτιασμού (3μ)", 0, 180, 140)
-rom_pronation_3m = st.sidebar.slider("ROM πρηνισμού (3μ)", 0, 180, 140)
-age_group = st.sidebar.selectbox("Ηλικιακή ομάδα", ["Νεαρός", "Μέσης ηλικίας", "Ηλικιωμένος"])
-risk_triad = st.sidebar.selectbox("Κίνδυνος (τριάδα)", ["Χαμηλός", "Μέτριος", "Υψηλός"])
-charlson_index = st.sidebar.slider("Δείκτης Charlson", 0, 10, 2)
-edmonton_frail_scale = st.sidebar.slider("Δείκτης Edmonton", 0, 10, 3)
-pase_score = st.sidebar.number_input("PASE Score", min_value=0, max_value=400, value=100)
-displacement = st.sidebar.selectbox("Μετατόπιση", ["Όχι", "Ναι"])
-fracture_stability = st.sidebar.selectbox("Σταθερότητα κατάγματος", ["Σταθερό", "Ασταθές"])
 
-# Μετατροπή σε αριθμητικές τιμές
+# Περισσότερα πεδία μόνο για Γιατρό/Ειδικό
+if user_type == "Γιατρός / Ειδικός":
+    osteoporosis = st.sidebar.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
+    diabetes = st.sidebar.selectbox("Σακχαρώδης Διαβήτης", ["Όχι", "Ναι"])
+    fracture_type = st.sidebar.selectbox("Τύπος κατάγματος", ["Απλό", "Σύνθετο"])
+    physio_sessions = st.sidebar.number_input("Αριθμός συνεδριών φυσιοθεραπείας", min_value=0, max_value=100, value=20)
+    grip_strength_improvement = st.sidebar.slider("Βελτίωση δύναμης λαβής (%)", 0, 100, 50)
+    dash_score_6months = st.sidebar.slider("DASH score στους 6 μήνες", 0, 100, 40)
+    rom_extension_3m = st.sidebar.slider("ROM έκτασης (3μ)", 0, 180, 160)
+    rom_flexion_3m = st.sidebar.slider("ROM κάμψης (3μ)", 0, 180, 150)
+    rom_supination_3m = st.sidebar.slider("ROM υπτιασμού (3μ)", 0, 180, 140)
+    rom_pronation_3m = st.sidebar.slider("ROM πρηνισμού (3μ)", 0, 180, 140)
+    age_group = st.sidebar.selectbox("Ηλικιακή ομάδα", ["Νεαρός", "Μέσης ηλικίας", "Ηλικιωμένος"])
+    risk_triad = st.sidebar.selectbox("Κίνδυνος (τριάδα)", ["Χαμηλός", "Μέτριος", "Υψηλός"])
+    charlson_index = st.sidebar.slider("Δείκτης Charlson", 0, 10, 2)
+    edmonton_frail_scale = st.sidebar.slider("Δείκτης Edmonton", 0, 10, 3)
+    pase_score = st.sidebar.number_input("PASE Score", min_value=0, max_value=400, value=100)
+    displacement = st.sidebar.selectbox("Μετατόπιση", ["Όχι", "Ναι"])
+    fracture_stability = st.sidebar.selectbox("Σταθερότητα κατάγματος", ["Σταθερό", "Ασταθές"])
+else:
+    # Για απλό ασθενή βάζουμε προεπιλεγμένες ή απλές τιμές (μπορείς να τις αλλάξεις ή να τις αφήσεις κενές)
+    osteoporosis = "Όχι"
+    diabetes = "Όχι"
+    fracture_type = "Απλό"
+    physio_sessions = 20
+    grip_strength_improvement = 50
+    dash_score_6months = 40
+    rom_extension_3m = 160
+    rom_flexion_3m = 150
+    rom_supination_3m = 140
+    rom_pronation_3m = 140
+    age_group = "Μέσης ηλικίας"
+    risk_triad = "Μέτριος"
+    charlson_index = 2
+    edmonton_frail_scale = 3
+    pase_score = 100
+    displacement = "Όχι"
+    fracture_stability = "Σταθερό"
+
+# Μετατροπή σε αριθμητικά για το μοντέλο
 input_dict = {
     "age": age,
     "sex": 0 if sex == "Άνδρας" else 1,
@@ -75,35 +97,16 @@ input_dict = {
 input_df = pd.DataFrame([input_dict])
 input_df = input_df[model_features]
 
-# Πρόβλεψη
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction_weeks = model.predict(input_df)[0]
     st.subheader(f"🕒 Εκτιμώμενος Χρόνος Αποκατάστασης: **{prediction_weeks:.1f} εβδομάδες**")
 
-    # Μέσος όρος
     avg_weeks = df["recovery_time_weeks"].mean()
     st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
 
-    # Κατανομή
-    st.markdown("### 📈 Κατανομή Χρόνου Αποκατάστασης")
     fig, ax = plt.subplots()
     sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
     ax.axvline(prediction_weeks, color='red', linestyle='--', label='Η πρόβλεψή σας')
     ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
     ax.legend()
     st.pyplot(fig)
-
-    # Σύγκριση με παρόμοιους
-    st.markdown("### 🧍‍♂️ Συγκριτικά με Παρόμοιους Ασθενείς")
-    similar = df[
-        (df["sex"] == input_dict["sex"]) &
-        (df["treatment_type"] == input_dict["treatment_type"]) &
-        (df["fracture_type"] == input_dict["fracture_type"]) &
-        (abs(df["age"] - input_dict["age"]) <= 5)
-    ]
-    if not similar.empty:
-        st.write(f"Βρέθηκαν {len(similar)} παρόμοιοι ασθενείς.")
-        st.write(f"📉 Μέσος χρόνος αποκατάστασης τους: **{similar['recovery_time_weeks'].mean():.1f} εβδομάδες**")
-    else:
-        st.warning("Δεν βρέθηκαν παρόμοιοι ασθενείς για σύγκριση.")
-
