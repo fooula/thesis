@@ -24,8 +24,8 @@ early_physiotherapy_map = {"Όχι": 0, "Ναι": 1}
 osteoporosis_map = {"Όχι": 0, "Ναι": 1}
 diabetes_map = {"Όχι": 0, "Ναι": 1}
 fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1, "Συντριπτικό": 2}
+fracture_stability_map = {"Σταθερό": 0, "Ασταθές": 1}
 age_group_map = {"<50": 0, "50-59": 1, "60-69": 2, "70-79": 3, "80+": 4}
-fracture_stability_map = {"stable": 0, "unstable": 1}
 
 # Sidebar FAQ
 with st.sidebar.expander("ℹ️ Τι σημαίνουν οι όροι;"):
@@ -46,6 +46,7 @@ with st.sidebar.expander("ℹ️ Τι σημαίνουν οι όροι;"):
     - **rom_flexion_3m**: Κάμψη
     - **rom_supination_3m**: Υπτιασμός
     - **rom_pronation_3m**: Πρηνισμός
+- **fracture_stability**: Σταθερότητα κατάγματος (Σταθερό/Ασταθές)
     """)
 
 st.title("Εκτίμηση Χρόνου Αποκατάστασης Μετά Από Κάταγμα Κερκίδας")
@@ -66,22 +67,24 @@ rom_flexion_3m = st.number_input("ROM Flexion 3 μήνες", min_value=0.0, max_
 rom_supination_3m = st.number_input("ROM Supination 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
 rom_pronation_3m = st.number_input("ROM Pronation 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
 age_group = st.selectbox("Ηλικιακή Ομάδα", ["<50", "50-59", "60-69", "70-79", "80+"])
-risk_triad = st.selectbox("Risk Triad", [0, 1])
 charlson_index = st.number_input("Charlson Comorbidity Index", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
 displacement = st.selectbox("Displacement", [0, 1])
 fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
 
-# Δημιουργία input DataFrame
+# Υπολογισμός risk_triad (Γυναίκα, ηλικία >65, οστεοπόρωση)
+risk_triad = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
+
+# Δημιουργία input DataFrame με mapping
 input_dict = {
     "age": age,
-    "sex": sex,
-    "treatment_type": treatment_type,
-    "early_physiotherapy": early_physiotherapy,
-    "osteoporosis": osteoporosis,
-    "diabetes": diabetes,
-    "fracture_type": fracture_type,
+    "sex": sex_map[sex],
+    "treatment_type": treatment_type_map[treatment_type],
+    "early_physiotherapy": early_physiotherapy_map[early_physiotherapy],
+    "osteoporosis": osteoporosis_map[osteoporosis],
+    "diabetes": diabetes_map[diabetes],
+    "fracture_type": fracture_type_map[fracture_type],
     "physio_sessions": physio_sessions,
     "grip_strength_improvement": grip_strength_improvement,
     "dash_score_6months": dash_score_6months,
@@ -89,25 +92,15 @@ input_dict = {
     "rom_flexion_3m": rom_flexion_3m,
     "rom_supination_3m": rom_supination_3m,
     "rom_pronation_3m": rom_pronation_3m,
-    "age_group": age_group,
+    "age_group": age_group_map[age_group],
     "risk_triad": risk_triad,
     "charlson_index": charlson_index,
     "edmonton_frail_scale": edmonton_frail_scale,
     "pase_score": pase_score,
     "displacement": displacement,
-    "fracture_stability": fracture_stability,
+    "fracture_stability": fracture_stability_map[fracture_stability],
 }
 input_df = pd.DataFrame([input_dict])
-
-# Mapping κατηγορικών
-input_df["sex"] = input_df["sex"].map(sex_map)
-input_df["treatment_type"] = input_df["treatment_type"].map(treatment_type_map)
-input_df["early_physiotherapy"] = input_df["early_physiotherapy"].map(early_physiotherapy_map)
-input_df["osteoporosis"] = input_df["osteoporosis"].map(osteoporosis_map)
-input_df["diabetes"] = input_df["diabetes"].map(diabetes_map)
-input_df["fracture_type"] = input_df["fracture_type"].map(fracture_type_map)
-input_df["age_group"] = input_df["age_group"].map(age_group_map)
-input_df["fracture_stability"] = input_df["fracture_stability"].map(fracture_stability_map)
 
 # Έλεγχος για NaN μετά το mapping
 if input_df[model_features].isnull().any().any():
