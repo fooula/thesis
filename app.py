@@ -100,9 +100,10 @@ input_df = input_df[model_features]
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction_weeks = model.predict(input_df)[0]
     st.subheader(f"🕒 Εκτιμώμενος Χρόνος Αποκατάστασης: **{prediction_weeks:.1f} εβδομάδες**")
+st.info("Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτικό μοντέλο με τεχνητά (συνθετικά) δεδομένα.")
 
-    avg_weeks = df["recovery_time_weeks"].mean()
-    st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
+avg_weeks = df["recovery_time_weeks"].mean()
+st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
 
     fig, ax = plt.subplots()
     sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
@@ -110,3 +111,4 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
     ax.legend()
     st.pyplot(fig)
+
