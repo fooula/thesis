@@ -17,8 +17,9 @@ model_features = [
     "displacement", "fracture_stability"
 ]
 
-st.sidebar.info("➡️ Δείτε παρακάτω επεξήγηση για όλους τους όρους της εφαρμογής.")
-
+st.sidebar.info(
+    "ℹ️ Για βοήθεια και επεξήγηση όρων, κάντε κλικ στο βελάκι (▸) παρακάτω για να ανοίξετε το FAQ."
+)
 with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια"):
     st.markdown("""
 **Charlson Comorbidity Index (CCI):**  
