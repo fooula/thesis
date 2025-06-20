@@ -151,5 +151,10 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.legend()
     st.pyplot(fig)
 
+st.markdown(
+    "<span style='color:blue; font-weight:bold;'>➡️ Πατήστε το βελάκι πάνω αριστερά (☰) για να βρείτε πληροφορίες και επεξήγηση όρων στο FAQ!</span>",
+    unsafe_allow_html=True
+)
+
 
 
