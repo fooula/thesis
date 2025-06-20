@@ -85,6 +85,14 @@ input_df["fracture_type"] = input_df["fracture_type"].map(fracture_type_map)
 input_df["age_group"] = input_df["age_group"].map(age_group_map)
 input_df["fracture_stability"] = input_df["fracture_stability"].map(fracture_stability_map)
 
+# Έλεγχος για NaN
+if input_df["treatment_type"].isnull().any():
+    st.error("Λάθος τιμή στο πεδίο 'Τύπος Θεραπείας'.")
+    st.stop()
+
+# Μετατροπή όλων των στηλών σε float
+input_df = input_df.astype(float)
+
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction_weeks = model.predict(input_df)[0]
     st.subheader(f"🕒 Εκτιμώμενος Χρόνος Αποκατάστασης: **{prediction_weeks:.1f} εβδομάδες**")
