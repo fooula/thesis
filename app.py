@@ -16,7 +16,7 @@ model_features = [
     "age_group", "risk_triad", "charlson_index", "edmonton_frail_scale", "pase_score",
     "displacement", "fracture_stability"
 ]
-st.info("ℹ️ Πατήστε το βελάκι πάνω αριστερά (👈) για να ανοίξετε το μενού βοήθειας (FAQ) με επεξήγηση όλων των όρων της εφαρμογής.")
+
 st.markdown(
     "<span style='color:blue; font-weight:bold;'>👈 Πατήστε το βελάκι πάνω αριστερά για να βρείτε πληροφορίες και επεξήγηση όρων στο FAQ!</span>",
     unsafe_allow_html=True
