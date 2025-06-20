@@ -18,9 +18,12 @@ model_features = [
 ]
 
 # Mapping dictionaries για κατηγορικά
-sex_map = {"male": 0, "female": 1}
-treatment_type_map = {"operative": 1, "nonoperative": 0}
-fracture_type_map = {"A": 0, "B": 1, "C": 2}
+sex_map = {"Ανδρας": 0, "Γυναίκα": 1}
+treatment_type_map = {"Χειρουργική": 1, "Μη Χειρουργική": 0}
+early_physiotherapy_map = {"Όχι": 0, "Ναι": 1}
+osteoporosis_map = {"Όχι": 0, "Ναι": 1}
+diabetes_map = {"Όχι": 0, "Ναι": 1}
+fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1, "Συντριπτικό": 2}
 age_group_map = {"<50": 0, "50-59": 1, "60-69": 2, "70-79": 3, "80+": 4}
 fracture_stability_map = {"stable": 0, "unstable": 1}
 
@@ -51,10 +54,10 @@ st.title("Εκτίμηση Χρόνου Αποκατάστασης Μετά Απ
 age = st.number_input("Ηλικία", min_value=18, max_value=100, value=60)
 sex = st.selectbox("Φύλο", ["Ανδρας", "Γυναίκα"])
 treatment_type = st.selectbox("Τύπος Θεραπείας", ["Χειρουργική", "Μη Χειρουργική"])
-early_physiotherapy = st.selectbox("Έγκαιρη Φυσικοθεραπεία", [0, 1])
-osteoporosis = st.selectbox("Οστεοπόρωση", [0, 1])
-diabetes = st.selectbox("Διαβήτης", [0, 1])
-fracture_type = st.selectbox("Τύπος Κατάγματος", ["A", "B", "C"])
+early_physiotherapy = st.selectbox("Έγκαιρη Φυσικοθεραπεία", ["Όχι", "Ναι"])
+osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
+diabetes = st.selectbox("Διαβήτης", ["Όχι", "Ναι"])
+fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό", "Συντριπτικό"])
 physio_sessions = st.number_input("Συνεδρίες Φυσικοθεραπείας", min_value=0, max_value=30, value=10)
 grip_strength_improvement = st.number_input("Βελτίωση Δύναμης Λαβής (%)", min_value=0.0, max_value=100.0, value=10.0)
 dash_score_6months = st.number_input("DASH score στους 6 μήνες", min_value=0.0, max_value=100.0, value=20.0)
@@ -68,7 +71,7 @@ charlson_index = st.number_input("Charlson Comorbidity Index", min_value=0, max_
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
 displacement = st.selectbox("Displacement", [0, 1])
-fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["stable", "unstable"])
+fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
 
 # Δημιουργία input DataFrame
 input_dict = {
@@ -99,6 +102,9 @@ input_df = pd.DataFrame([input_dict])
 # Mapping κατηγορικών
 input_df["sex"] = input_df["sex"].map(sex_map)
 input_df["treatment_type"] = input_df["treatment_type"].map(treatment_type_map)
+input_df["early_physiotherapy"] = input_df["early_physiotherapy"].map(early_physiotherapy_map)
+input_df["osteoporosis"] = input_df["osteoporosis"].map(osteoporosis_map)
+input_df["diabetes"] = input_df["diabetes"].map(diabetes_map)
 input_df["fracture_type"] = input_df["fracture_type"].map(fracture_type_map)
 input_df["age_group"] = input_df["age_group"].map(age_group_map)
 input_df["fracture_stability"] = input_df["fracture_stability"].map(fracture_stability_map)
