@@ -144,7 +144,7 @@ input_df = input_df[model_features]
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction_weeks = model.predict(input_df)[0]
     st.subheader(f"🕒 Εκτιμώμενος Χρόνος Αποκατάστασης: **{prediction_weeks:.1f} εβδομάδες**")
-    st.info("Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτικό μοντέλο με τεχνητά (συνθετικά) δεδομένα.")
+    st.info("⚠️ Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτικό μοντέλο με τεχνητά (συνθετικά) δεδομένα. ⚠️")
 
     avg_weeks = df["recovery_time_weeks"].mean()
     st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
