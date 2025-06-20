@@ -49,8 +49,8 @@ st.title("Εκτίμηση Χρόνου Αποκατάστασης Μετά Απ
 
 # Εισαγωγή τιμών από τον χρήστη
 age = st.number_input("Ηλικία", min_value=18, max_value=100, value=60)
-sex = st.selectbox("Φύλο", ["male", "female"])
-treatment_type = st.selectbox("Τύπος Θεραπείας", ["operative", "nonoperative"])
+sex = st.selectbox("Φύλο", ["Ανδρας", "Γυναίκα"])
+treatment_type = st.selectbox("Τύπος Θεραπείας", ["Χειρουργική", "Μη Χειρουργική"])
 early_physiotherapy = st.selectbox("Έγκαιρη Φυσικοθεραπεία", [0, 1])
 osteoporosis = st.selectbox("Οστεοπόρωση", [0, 1])
 diabetes = st.selectbox("Διαβήτης", [0, 1])
