@@ -22,9 +22,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.info(
-    "ℹ️ Για βοήθεια και επεξήγηση όρων, δείτε το παρακάτω πλαίσιο FAQ."
-)
+
 with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια"):
     st.markdown("""
 **Charlson Comorbidity Index (CCI):**  
