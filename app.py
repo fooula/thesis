@@ -105,10 +105,10 @@ st.info("Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτ
 avg_weeks = df["recovery_time_weeks"].mean()
 st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
 
-    fig, ax = plt.subplots()
-    sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
-    ax.axvline(prediction_weeks, color='red', linestyle='--', label='Η πρόβλεψή σας')
-    ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
-    ax.legend()
-    st.pyplot(fig)
+fig, ax = plt.subplots()
+sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
+ax.axvline(prediction_weeks, color='red', linestyle='--', label='Η πρόβλεψή σας')
+ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
+ax.legend()
+st.pyplot(fig)
 
