@@ -25,7 +25,7 @@ st.markdown(
 st.sidebar.info(
     "ℹ️ Για βοήθεια και επεξήγηση όρων, δείτε το παρακάτω πλαίσιο FAQ."
 )
-with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια", expanded=True):
+with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια"):
     st.markdown("""
 **Charlson Comorbidity Index (CCI):**  
 Ο CCI είναι ένας διεθνώς αναγνωρισμένος δείκτης που χρησιμοποιείται για την εκτίμηση της συνολικής βαρύτητας των συνοσηροτήτων ενός ασθενούς.
@@ -68,6 +68,7 @@ diabetes_map = {"Όχι": 0, "Ναι": 1}
 fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1, "Συντριπτικό": 2}
 fracture_stability_map = {"Σταθερό": 0, "Ασταθές": 1}
 age_group_map = {"<50": 0, "50-59": 1, "60-69": 2, "70-79": 3, "80+": 4}
+displacement_map = {"Όχι": 0, "Ναι": 1}
 
 st.title("Εκτίμηση Χρόνου Αποκατάστασης Μετά Από Κάταγμα Κερκίδας")
 
@@ -89,7 +90,7 @@ rom_pronation_3m = st.number_input("ROM Pronation 3 μήνες", min_value=0.0, 
 charlson_index = st.number_input("Charlson Comorbidity Index", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
-displacement = st.selectbox("Displacement", [0, 1])
+displacement = st.selectbox("Μετατόπιση Κατάγματος", ["Όχι", "Ναι"])
 fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
 
 # Υπολογισμός risk_triad (Γυναίκα, ηλικία >65, οστεοπόρωση)
@@ -128,7 +129,7 @@ input_dict = {
     "charlson_index": charlson_index,
     "edmonton_frail_scale": edmonton_frail_scale,
     "pase_score": pase_score,
-    "displacement": displacement,
+    "displacement": displacement_map[displacement],
     "fracture_stability": fracture_stability_map[fracture_stability],
 }
 input_df = pd.DataFrame([input_dict])
@@ -171,6 +172,19 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
     ax.legend()
     st.pyplot(fig)
+
+with st.sidebar.expander("ℹ️ Τι σημαίνουν οι όροι;"):
+    st.markdown("""
+- **Charlson Comorbidity Index (CCI)**: 
+    - Ο CCI είναι ένας διεθνώς αναγνωρισμένος δείκτης συνοσηροτήτων.
+    - [Charlson ME, et al. J Chronic Dis. 1987](https://pubmed.ncbi.nlm.nih.gov/3558716/)
+- **Edmonton Frail Scale**: 
+    - Κλίμακα αξιολόγησης ευαλωτότητας ηλικιωμένων.
+    - [Rolfson DB, et al. Age Ageing. 2006](https://pubmed.ncbi.nlm.nih.gov/16641176/)
+- **PASE Score**: 
+    - Κλίμακα φυσικής δραστηριότητας για ηλικιωμένους.
+    - [Washburn RA, et al. J Clin Epidemiol. 1993](https://pubmed.ncbi.nlm.nih.gov/8410095/)
+    """)
 
 
 
