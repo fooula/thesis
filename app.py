@@ -70,23 +70,35 @@ input_dict = {
 }
 
 input_df = pd.DataFrame([input_dict])
-input_df = input_df[model_features]
+input_df = input_df[model_features]  # Εξασφάλιση ότι οι στήλες είναι στην ίδια σειρά με το μοντέλο
+
+
+sex_map = {"male": 0, "female": 1}
+treatment_type_map = {"operative": 1, "nonoperative": 0}
+fracture_type_map = {"A": 0, "B": 1, "C": 2}
+age_group_map = {"<50": 0, "50-59": 1, "60-69": 2, "70-79": 3, "80+": 4}
+fracture_stability_map = {"stable": 0, "unstable": 1}
+
+input_df["sex"] = input_df["sex"].map(sex_map)
+input_df["treatment_type"] = input_df["treatment_type"].map(treatment_type_map)
+input_df["fracture_type"] = input_df["fracture_type"].map(fracture_type_map)
+input_df["age_group"] = input_df["age_group"].map(age_group_map)
+input_df["fracture_stability"] = input_df["fracture_stability"].map(fracture_stability_map)
 
 if st.button("🔮 Υπολογισμός Χρόνου Αποκατάστασης"):
     prediction_weeks = model.predict(input_df)[0]
     st.subheader(f"🕒 Εκτιμώμενος Χρόνος Αποκατάστασης: **{prediction_weeks:.1f} εβδομάδες**")
-st.info("Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτικό μοντέλο με τεχνητά (συνθετικά) δεδομένα.")
+    st.info("Αυτή η πρόβλεψη βασίζεται σε εκπαιδευτικό μοντέλο με τεχνητά (συνθετικά) δεδομένα.")
 
-avg_weeks = df["recovery_time_weeks"].mean()
-st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
+    avg_weeks = df["recovery_time_weeks"].mean()
+    st.markdown(f"📊 **Μέσος χρόνος αποκατάστασης στο δείγμα:** `{avg_weeks:.1f} εβδομάδες`")
 
-prediction_weeks = model.predict(input_df)[0]
-fig, ax = plt.subplots()
-sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
-ax.axvline(prediction_weeks, color='red', linestyle='--', label='Η πρόβλεψή σας')
-ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
-ax.legend()
-st.pyplot(fig)
+    fig, ax = plt.subplots()
+    sns.histplot(df["recovery_time_weeks"], kde=True, bins=20, ax=ax, color='skyblue')
+    ax.axvline(prediction_weeks, color='red', linestyle='--', label='Η πρόβλεψή σας')
+    ax.axvline(avg_weeks, color='green', linestyle='--', label='Μέσος όρος')
+    ax.legend()
+    st.pyplot(fig)
 
 with st.sidebar.expander("ℹ️ Τι σημαίνουν οι όροι;"):
     st.markdown("""
