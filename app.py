@@ -16,7 +16,10 @@ model_features = [
     "age_group", "risk_triad", "charlson_index", "edmonton_frail_scale", "pase_score",
     "displacement", "fracture_stability"
 ]
-
+st.markdown(
+    "<span style='color:blue; font-weight:bold;'>👈 Πατήστε το βελάκι πάνω αριστερά για να βρείτε πληροφορίες και επεξήγηση όρων στο FAQ!</span>",
+    unsafe_allow_html=True
+)
 st.sidebar.info(
     "ℹ️ Για βοήθεια και επεξήγηση όρων, δείτε το παρακάτω πλαίσιο FAQ."
 )
@@ -151,10 +154,7 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.legend()
     st.pyplot(fig)
 
-st.markdown(
-    "<span style='color:blue; font-weight:bold;'>➡️ Πατήστε το βελάκι πάνω αριστερά (☰) για να βρείτε πληροφορίες και επεξήγηση όρων στο FAQ!</span>",
-    unsafe_allow_html=True
-)
+
 
 
 
