@@ -17,10 +17,7 @@ model_features = [
     "displacement", "fracture_stability"
 ]
 
-st.markdown(
-    "<span style='color:red; font-weight:bold;'>👈 Πατήστε το βελάκι πάνω αριστερά για να βρείτε πληροφορίες και επεξήγηση όρων στο FAQ!</span>",
-    unsafe_allow_html=True
-)
+
 
 
 with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια"):
