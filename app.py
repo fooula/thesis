@@ -89,7 +89,6 @@ osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
 charlson_index = st.number_input("Charlson Comorbidity Index", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
-risk_triad = st.selectbox("Τριάδα κινδύνου (Γυναίκα, ηλικία >65, οστεοπόρωση)", ["Όχι", "Ναι"])
 social_support = st.selectbox("Κοινωνική/Οικογενειακή Υποστήριξη", ["Καμία", "Μερική", "Σταθερή"])
 fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό"])
 displacement = st.selectbox("Παρεκτόπιση", ["Όχι", "Ναι"])
@@ -97,8 +96,8 @@ fracture_stability = st.selectbox("Σταθερότητα Κατάγματος",
 operative_treatment = st.selectbox("Χειρουργική Αντιμετώπιση", ["Όχι", "Ναι"])
 immobilization_days = st.number_input("Διάρκεια Ακινητοποίησης (ημέρες)", min_value=10, max_value=60, value=30)
 
-# Υπολογισμός risk_triad αν θέλεις να το κάνεις αυτόματα:
-# risk_triad_value = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
+# Υπολογισμός risk_triad αυτόματα:
+risk_triad = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
 
 # Δημιουργία input DataFrame με mapping
 input_dict = {
