@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import xgboost
 
 
 # Φόρτωση μοντέλου και δεδομένων
