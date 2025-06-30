@@ -130,19 +130,27 @@ if input_df[model_features].isnull().any().any():
 # Τελική σειρά στηλών
 input_df = input_df[model_features]
 
-# Υπολογισμός Risk Score με βάση τη σημασία των χαρακτηριστικών
+# --- Ενημερωμένος υπολογισμός Risk Score με βάρη από SHAP feature‐importance ---
 risk_score = (
-    osteoporosis_map[osteoporosis] * 0.20 +
-    risk_triad * 0.15 +                           # χρησιμοποιούμε την integer τιμή
-    charlson_index * 0.12 +
-    fracture_stability_map[fracture_stability] * 0.10 +
-    age / 100 * 0.07 +
-    operative_treatment_map[operative_treatment] * 0.05 +
-    fracture_type_map[fracture_type] * 0.03 +
-    displacement_map[displacement] * 0.03 +
-    edmonton_frail_scale / 17 * 0.02 +
-    pase_score / 400 * -0.02 +
-    social_support_map[social_support] * -0.02
+    # κανονικοποίηση συνεχειών: immobilization_days 10–60 → 0–1
+    (immobilization_days - 10) / (60 - 10) * 0.144 +
+
+    # binary / ordinal features
+    risk_triad * 0.137 +
+    (age / 100) * 0.124 +
+    operative_treatment_map[operative_treatment] * 0.111 +
+    osteoporosis_map[osteoporosis] * 0.105 +
+    fracture_type_map[fracture_type] * 0.073 +
+    fracture_stability_map[fracture_stability] * 0.068 +
+
+    # κλίμακες: charlson_index 0–10, edmonton 0–17, pase 0–400
+    (charlson_index / 10) * 0.059 +
+    (pase_score / 400) * 0.044 +
+    (edmonton_frail_scale / 17) * 0.043 +
+
+    displacement_map[displacement] * 0.041 +
+    social_support_map[social_support] * 0.035 +
+    sex_map[sex] * 0.009
 )
 
 st.metric("Risk Score", f"{risk_score:.2f}")
