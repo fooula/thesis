@@ -3,6 +3,10 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+
+# Εγκατάσταση απαιτούμενων βιβλιοθηκών
+os.system("pip install xgboost scikit-learn")
 
 # Φόρτωση μοντέλου και δεδομένων
 model = joblib.load("xgboost_model.pkl")
