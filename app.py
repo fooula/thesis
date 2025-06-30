@@ -3,14 +3,11 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
 
-# Εγκατάσταση απαιτούμενων βιβλιοθηκών
-os.system("pip install xgboost scikit-learn")
 
 # Φόρτωση μοντέλου και δεδομένων
 model = joblib.load("xgboost_model.pkl")
-df = pd.read_csv("distal_radius_recovery.csv")
+df = pd.read_csv("distal_radius_fracture_recovery.csv")
 
 # Ορισμός των features που περιμένει το μοντέλο
 model_features = [
