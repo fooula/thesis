@@ -10,11 +10,10 @@ df = pd.read_csv("distal_radius_recovery.csv")
 
 # Ορισμός των features που περιμένει το μοντέλο
 model_features = [
-    "age", "sex", "treatment_type", "early_physiotherapy", "osteoporosis", "diabetes",
-    "fracture_type", "physio_sessions", "grip_strength_improvement", "dash_score_6months",
-    "rom_extension_3m", "rom_flexion_3m", "rom_supination_3m", "rom_pronation_3m",
-    "age_group", "risk_triad", "charlson_index", "edmonton_frail_scale", "pase_score",
-    "displacement", "fracture_stability"
+    "age", "sex", "dominant_hand_injured", "osteoporosis", "charlson_index",
+    "edmonton_frail_scale", "pase_score", "risk_triad", "social_support",
+    "fracture_type", "displacement", "fracture_stability", "operative_treatment",
+    "immobilization_days"
 ]
 
 
@@ -69,76 +68,52 @@ with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια")
 
 # Mapping dictionaries για κατηγορικά
 sex_map = {"Ανδρας": 0, "Γυναίκα": 1}
-treatment_type_map = {"Χειρουργική": 1, "Μη Χειρουργική": 0}
-early_physiotherapy_map = {"Όχι": 0, "Ναι": 1}
+dominant_hand_injured_map = {"Όχι": 0, "Ναι": 1}
 osteoporosis_map = {"Όχι": 0, "Ναι": 1}
-diabetes_map = {"Όχι": 0, "Ναι": 1}
-fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1, "Συντριπτικό": 2}
-fracture_stability_map = {"Σταθερό": 0, "Ασταθές": 1}
-age_group_map = {"<50": 0, "50-59": 1, "60-69": 2, "70-79": 3, "80+": 4}
+risk_triad_map = {"Όχι": 0, "Ναι": 1}
+social_support_map = {"Καμία": 0, "Μερική": 1, "Σταθερή": 2}
+fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1}
 displacement_map = {"Όχι": 0, "Ναι": 1}
+fracture_stability_map = {"Σταθερό": 0, "Ασταθές": 1}
+operative_treatment_map = {"Όχι": 0, "Ναι": 1}
 
 st.title("Εκτίμηση Χρόνου Αποκατάστασης Μετά Από Κάταγμα Κερκίδας")
 
 # Εισαγωγή τιμών από τον χρήστη
 age = st.number_input("Ηλικία", min_value=18, max_value=100, value=60)
 sex = st.selectbox("Φύλο", ["Ανδρας", "Γυναίκα"])
-treatment_type = st.selectbox("Τύπος Θεραπείας", ["Χειρουργική", "Μη Χειρουργική"])
-early_physiotherapy = st.selectbox("Έγκαιρη Φυσικοθεραπεία", ["Όχι", "Ναι"])
+dominant_hand_injured = st.selectbox("Τραυματισμός κυρίαρχου άνω άκρου;", ["Όχι", "Ναι"])
 osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
-diabetes = st.selectbox("Διαβήτης", ["Όχι", "Ναι"])
-fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό", "Συντριπτικό"])
-physio_sessions = st.number_input("Συνεδρίες Φυσικοθεραπείας", min_value=0, max_value=30, value=10)
-grip_strength_improvement = st.number_input("Βελτίωση Δύναμης Λαβής (%)", min_value=0.0, max_value=100.0, value=10.0)
-dash_score_6months = st.number_input("DASH score στους 6 μήνες", min_value=0.0, max_value=100.0, value=20.0)
-rom_extension_3m = st.number_input("ROM Extension 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
-rom_flexion_3m = st.number_input("ROM Flexion 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
-rom_supination_3m = st.number_input("ROM Supination 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
-rom_pronation_3m = st.number_input("ROM Pronation 3 μήνες", min_value=0.0, max_value=180.0, value=60.0)
 charlson_index = st.number_input("Charlson Comorbidity Index", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
-displacement = st.selectbox("Μετατόπιση Κατάγματος", ["Όχι", "Ναι"])
+risk_triad = st.selectbox("Τριάδα κινδύνου (Γυναίκα, ηλικία >65, οστεοπόρωση)", ["Όχι", "Ναι"])
+social_support = st.selectbox("Κοινωνική/Οικογενειακή Υποστήριξη", ["Καμία", "Μερική", "Σταθερή"])
+fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό"])
+displacement = st.selectbox("Παρεκτόπιση", ["Όχι", "Ναι"])
 fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
+operative_treatment = st.selectbox("Χειρουργική Αντιμετώπιση", ["Όχι", "Ναι"])
+immobilization_days = st.number_input("Διάρκεια Ακινητοποίησης (ημέρες)", min_value=10, max_value=60, value=30)
 
-# Υπολογισμός risk_triad (Γυναίκα, ηλικία >65, οστεοπόρωση)
-risk_triad = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
-
-# Υπολογισμός age_group με βάση την ηλικία
-if age < 50:
-    age_group = "<50"
-elif 50 <= age < 60:
-    age_group = "50-59"
-elif 60 <= age < 70:
-    age_group = "60-69"
-elif 70 <= age < 80:
-    age_group = "70-79"
-else:
-    age_group = "80+"
+# Υπολογισμός risk_triad αν θέλεις να το κάνεις αυτόματα:
+# risk_triad_value = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
 
 # Δημιουργία input DataFrame με mapping
 input_dict = {
     "age": age,
     "sex": sex_map[sex],
-    "treatment_type": treatment_type_map[treatment_type],
-    "early_physiotherapy": early_physiotherapy_map[early_physiotherapy],
+    "dominant_hand_injured": dominant_hand_injured_map[dominant_hand_injured],
     "osteoporosis": osteoporosis_map[osteoporosis],
-    "diabetes": diabetes_map[diabetes],
-    "fracture_type": fracture_type_map[fracture_type],
-    "physio_sessions": physio_sessions,
-    "grip_strength_improvement": grip_strength_improvement,
-    "dash_score_6months": dash_score_6months,
-    "rom_extension_3m": rom_extension_3m,
-    "rom_flexion_3m": rom_flexion_3m,
-    "rom_supination_3m": rom_supination_3m,
-    "rom_pronation_3m": rom_pronation_3m,
-    "age_group": age_group_map[age_group],
-    "risk_triad": risk_triad,
     "charlson_index": charlson_index,
     "edmonton_frail_scale": edmonton_frail_scale,
     "pase_score": pase_score,
+    "risk_triad": risk_triad_map[risk_triad],
+    "social_support": social_support_map[social_support],
+    "fracture_type": fracture_type_map[fracture_type],
     "displacement": displacement_map[displacement],
     "fracture_stability": fracture_stability_map[fracture_stability],
+    "operative_treatment": operative_treatment_map[operative_treatment],
+    "immobilization_days": immobilization_days,
 }
 input_df = pd.DataFrame([input_dict])
 
@@ -153,20 +128,16 @@ input_df = input_df[model_features]
 # Υπολογισμός Risk Score με βάση τη σημασία των χαρακτηριστικών
 risk_score = (
     osteoporosis_map[osteoporosis] * 0.20 +
-    risk_triad * 0.15 +
+    risk_triad_map[risk_triad] * 0.15 +
     charlson_index * 0.12 +
-    early_physiotherapy_map[early_physiotherapy] * 0.10 +
-    fracture_stability_map[fracture_stability] * 0.08 +
-    diabetes_map[diabetes] * 0.07 +
+    fracture_stability_map[fracture_stability] * 0.10 +
     age / 100 * 0.07 +
-    treatment_type_map[treatment_type] * 0.05 +
-    physio_sessions / 30 * 0.04 +
+    operative_treatment_map[operative_treatment] * 0.05 +
     fracture_type_map[fracture_type] * 0.03 +
     displacement_map[displacement] * 0.03 +
     edmonton_frail_scale / 17 * 0.02 +
     pase_score / 400 * -0.02 +  # Αρνητικό βάρος: υψηλότερο PASE = μικρότερος κίνδυνος
-    dash_score_6months / 100 * 0.01 +
-    grip_strength_improvement / 100 * -0.01  # Αρνητικό βάρος: μεγαλύτερη βελτίωση = μικρότερος κίνδυνος
+    social_support_map[social_support] * -0.02  # Αρνητικό βάρος: καλύτερη υποστήριξη = μικρότερος κίνδυνος
 )
 
 st.metric("Risk Score", f"{risk_score:.2f}")
