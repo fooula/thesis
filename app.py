@@ -48,23 +48,6 @@ with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια")
     - Μετατόπιση κατάγματος (0 = όχι, 1 = ναι). Η παρουσία μετατόπισης σχετίζεται με μεγαλύτερη βαρύτητα κάκωσης και συχνά απαιτεί πιο επιθετική θεραπεία.
     - [Müller ME, et al. AO classification of fractures. Injury. 1990](https://pubmed.ncbi.nlm.nih.gov/2221851/)
 
-- **DASH Score:**
-    - Ερωτηματολόγιο DASH (Disabilities of the Arm, Shoulder and Hand) στους 6 μήνες (0-100, υψηλότερο = χειρότερη λειτουργικότητα).
-    - Αξιολογεί τη λειτουργικότητα του άνω άκρου μετά από τραυματισμούς ή παθήσεις.
-    - [Hudak PL, et al. The DASH outcome measure. Am J Ind Med. 1996](https://pubmed.ncbi.nlm.nih.gov/8773720/)
-
-- **Βελτίωση Δύναμης Λαβής:**  
-Ποσοστιαία βελτίωση της δύναμης λαβής (%) μετά τη θεραπεία σε σχέση με την αρχική μέτρηση.
-
-- **ROM (Range of Motion):**
-    - Εύρος κίνησης καρπού στους 3 μήνες (μοίρες). Αξιολογείται σε τέσσερις βασικές κινήσεις:
-        - **rom_extension_3m:** Έκταση (extension)
-        - **rom_flexion_3m:** Κάμψη (flexion)
-        - **rom_supination_3m:** Υπτιασμός (supination)
-        - **rom_pronation_3m:** Πρηνισμός (pronation)
-    - Η αποκατάσταση του ROM είναι κρίσιμη για την επάνοδο στη λειτουργικότητα.
-    - [MacDermid JC, et al. Measurement of wrist motion. J Hand Ther. 2001](https://pubmed.ncbi.nlm.nih.gov/11511019/)
-
 - **Σταθερότητα Κατάγματος:**  
 Σταθερότητα κατάγματος (Σταθερό/Ασταθές). Η σταθερότητα καθορίζει τη θεραπευτική προσέγγιση και την πρόγνωση.
     """)
