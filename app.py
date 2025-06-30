@@ -6,7 +6,7 @@ import seaborn as sns
 
 
 # Φόρτωση μοντέλου και δεδομένων
-model = joblib.load("xgboost_model.pkl")
+model = joblib.load("xgboost_model.joblib")
 df = pd.read_csv("distal_radius_fracture_recovery.csv")
 
 # Ορισμός των features που περιμένει το μοντέλο

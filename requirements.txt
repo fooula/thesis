@@ -8,3 +8,10 @@ plotly
 matplotlib
 seaborn
 scikit-learn
+streamlit
+pandas
+joblib
+matplotlib
+seaborn
+xgboost
+scikit-learn
