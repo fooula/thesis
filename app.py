@@ -133,7 +133,7 @@ input_df = input_df[model_features]
 # Υπολογισμός Risk Score με βάση τη σημασία των χαρακτηριστικών
 risk_score = (
     osteoporosis_map[osteoporosis] * 0.20 +
-    risk_triad_map[risk_triad] * 0.15 +
+    risk_triad * 0.15 +                           # χρησιμοποιούμε την integer τιμή
     charlson_index * 0.12 +
     fracture_stability_map[fracture_stability] * 0.10 +
     age / 100 * 0.07 +
@@ -141,8 +141,8 @@ risk_score = (
     fracture_type_map[fracture_type] * 0.03 +
     displacement_map[displacement] * 0.03 +
     edmonton_frail_scale / 17 * 0.02 +
-    pase_score / 400 * -0.02 +  # Αρνητικό βάρος: υψηλότερο PASE = μικρότερος κίνδυνος
-    social_support_map[social_support] * -0.02  # Αρνητικό βάρος: καλύτερη υποστήριξη = μικρότερος κίνδυνος
+    pase_score / 400 * -0.02 +
+    social_support_map[social_support] * -0.02
 )
 
 st.metric("Risk Score", f"{risk_score:.2f}")
