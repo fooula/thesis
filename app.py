@@ -7,7 +7,7 @@ import xgboost
 
 
 # Φόρτωση μοντέλου και δεδομένων
-model = joblib.load("xgboost_model.joblib")
+model = joblib.load("xgboost_model.pkl")
 df = pd.read_csv("distal_radius_fracture_recovery.csv")
 
 # Ορισμός των features που περιμένει το μοντέλο
