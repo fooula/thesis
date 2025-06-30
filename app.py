@@ -74,7 +74,7 @@ sex_map = {"Ανδρας": 0, "Γυναίκα": 1}
 dominant_hand_injured_map = {"Όχι": 0, "Ναι": 1}
 osteoporosis_map = {"Όχι": 0, "Ναι": 1}
 risk_triad_map = {"Όχι": 0, "Ναι": 1}
-social_support_map = {"Καμία": 0, "Μερική": 1, "Σταθερή": 2}
+social_support_map = {"Καμία : Ζω μόνος/η και δεν υπάρχει διαθέσιμο άτομο να με βοηθά τακτικά.": 0, "Μερική : Έχω περιστασιακή βοήθεια από συγγενή, φίλο ή γείτονα.": 1, "Σταθερή : Eχω σταθερή και ενεργή υποστήριξη από οικογένεια ή φροντιστή": 2}
 fracture_type_map = {"Εξωαρθρικό": 0, "Ενδοαρθρικό": 1}
 displacement_map = {"Όχι": 0, "Ναι": 1}
 fracture_stability_map = {"Σταθερό": 0, "Ασταθές": 1}
@@ -90,7 +90,7 @@ osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
 charlson_index = st.number_input("Charlson Comorbidity Index (Βοηθεια Υπολογισμου: https://unaettie.com/en-us/pz/charlson.php?utm_source=chatgpt.com)", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale (Βοηθεια Υπολογισμου: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com)", min_value=0, max_value=17, value=5)
 pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
-social_support = st.selectbox("Κοινωνική/Οικογενειακή Υποστήριξη", ["Καμία", "Μερική", "Σταθερή"])
+social_support = st.selectbox("Κοινωνική/Οικογενειακή Υποστήριξη", ["Καμία : Ζω μόνος/η και δεν υπάρχει διαθέσιμο άτομο να με βοηθά τακτικά.", "Μερική : Έχω περιστασιακή βοήθεια από συγγενή, φίλο ή γείτονα.", "Σταθερή : Eχω σταθερή και ενεργή υποστήριξη από οικογένεια ή φροντιστή"])
 fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό"])
 displacement = st.selectbox("Παρεκτόπιση", ["Όχι", "Ναι"])
 fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
