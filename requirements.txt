@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 streamlit
 xgboost
 scikit-learn
@@ -7,4 +8,22 @@ numpy
 plotly
 matplotlib
 seaborn
+scikit-learn
+streamlit
+pandas
+joblib
+matplotlib
+seaborn
+xgboost
+=======
+streamlit
+xgboost
+scikit-learn
+joblib
+pandas
+numpy
+plotly
+matplotlib
+seaborn
+>>>>>>> 0284ac9bc0164c0789e88921d3d49b71517b49b6
 scikit-learn
