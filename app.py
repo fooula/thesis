@@ -4,7 +4,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import xgboost
-import dill
+
 
 
 # Φόρτωση μοντέλου και δεδομένων
@@ -97,7 +97,7 @@ fracture_stability = st.selectbox("Σταθερότητα Κατάγματος",
 operative_treatment = st.selectbox("Χειρουργική Αντιμετώπιση", ["Όχι", "Ναι"])
 immobilization_days = st.number_input("Διάρκεια Ακινητοποίησης (ημέρες)", min_value=10, max_value=60, value=30)
 
-# Υπολογισμός risk_triad αυτόματα:
+# Υπολογισμός risk_triad αυτόματα (χωρίς selectbox)
 risk_triad = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
 
 # Δημιουργία input DataFrame με mapping
@@ -109,7 +109,8 @@ input_dict = {
     "charlson_index": charlson_index,
     "edmonton_frail_scale": edmonton_frail_scale,
     "pase_score": pase_score,
-    "risk_triad": risk_triad_map[risk_triad],
+    # χρησιμοποιούμε απευθείας την integer τιμή που υπολογίσαμε
+    "risk_triad": risk_triad,
     "social_support": social_support_map[social_support],
     "fracture_type": fracture_type_map[fracture_type],
     "displacement": displacement_map[displacement],
@@ -117,7 +118,9 @@ input_dict = {
     "operative_treatment": operative_treatment_map[operative_treatment],
     "immobilization_days": immobilization_days,
 }
+
 input_df = pd.DataFrame([input_dict])
+input_df = input_df[model_features]
 
 # Έλεγχος για NaN μετά το mapping
 if input_df[model_features].isnull().any().any():
