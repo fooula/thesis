@@ -72,13 +72,31 @@ dominant_hand_injured = st.selectbox("Τραυματισμός κυρίαρχο�
 osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
 charlson_index = st.number_input("Charlson Comorbidity Index (Βοηθεια Υπολογισμου: https://unaettie.com/en-us/pz/charlson.php?utm_source=chatgpt.com)", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale (Βοηθεια Υπολογισμου: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com)", min_value=0, max_value=17, value=5)
-pase_score = st.number_input("PASE Score", min_value=0, max_value=400, value=100)
-social_support = st.selectbox("Κοινωνική/Οικογενειακή Υποστήριξη", ["Καμία : Ζω μόνος/η και δεν υπάρχει διαθέσιμο άτομο να με βοηθά τακτικά.", "Μερική : Έχω περιστασιακή βοήθεια από συγγενή, φίλο ή γείτονα.", "Σταθερή : Eχω σταθερή και ενεργή υποστήριξη από οικογένεια ή φροντιστή"])
-fracture_type = st.selectbox("Τύπος Κατάγματος", ["Εξωαρθρικό", "Ενδοαρθρικό"])
-displacement = st.selectbox("Παρεκτόπιση", ["Όχι", "Ναι"])
-fracture_stability = st.selectbox("Σταθερότητα Κατάγματος", ["Σταθερό", "Ασταθές"])
-operative_treatment = st.selectbox("Χειρουργική Αντιμετώπιση", ["Όχι", "Ναι"])
-immobilization_days = st.number_input("Διάρκεια Ακινητοποίησης (ημέρες)", min_value=10, max_value=60, value=30)
+
+# --- PASE: εμφάνιση μόνο για ηλικιωμένους με δυνατότητα threshold στο sidebar και βοήθεια ---
+pase_default = int(df["pase_score"].mean()) if "pase_score" in df.columns else 100
+pase_age_threshold = st.sidebar.number_input("Εμφάνιση PASE για ηλικίες ≥", min_value=18, max_value=100, value=65)
+
+if age >= pase_age_threshold:
+    st.markdown("### PASE Score (Physical Activity Scale for the Elderly)")
+    st.write("Αν δεν γνωρίζετε την ακριβή τιμή, επιλέξτε μια κατηγορία δραστηριότητας για να προταθεί μια ενδεικτική τιμή ή εισάγετε την τιμή χειροκίνητα.")
+    activity_hint = st.radio("Επιλέξτε βοήθεια για PASE", ["Εισάγω τιμή χειροκίνητα", "Χαμηλή δραστηριότητα", "Μέτρια δραστηριότητα", "Υψηλή δραστηριότητα"], index=0)
+    if activity_hint == "Εισάγω τιμή χειροκίνητα":
+        pase_score = st.number_input("PASE Score (0–400)", min_value=0, max_value=400, value=pase_default)
+    else:
+        suggested = {"Χαμηλή δραστηριότητα": 40, "Μέτρια δραστηριότητα": 150, "Υψηλή δραστηριότητα": 280}
+        pase_score = suggested[activity_hint]
+        st.info(f"Προτεινόμενη τιμή PASE: {pase_score} (βάσει κατηγορίας '{activity_hint}')")
+    with st.expander("Βοήθεια — Τι είναι το PASE;"):
+        st.markdown("""
+- Το PASE μετρά τη φυσική δραστηριότητα σε ηλικιωμένους (κλίμακα 0–400).
+- Αν έχετε επίσημο αποτέλεσμα, εισάγετέ το χειροκίνητα.
+- Ενδεικτικές κατηγορίες: Χαμηλή <100, Μέτρια 100–200, Υψηλή >200.
+- Online βοηθητικό εργαλείο: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com (ή άλλοι calculators/ερωτηματολόγια που χρησιμοποιήσατε στη μελέτη).
+        """)
+else:
+    pase_score = pase_default
+    st.info(f"PASE δεν απαιτείται για ηλικίες < {pase_age_threshold}. Χρησιμοποιείται προεπιλεγμένη τιμή: {pase_score}")
 
 # Υπολογισμός risk_triad αυτόματα (χωρίς selectbox)
 risk_triad = 1 if (sex == "Γυναίκα" and age > 65 and osteoporosis == "Ναι") else 0
