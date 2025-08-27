@@ -67,9 +67,19 @@ osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
 charlson_index = st.number_input("Charlson Comorbidity Index (Βοηθεια Υπολογισμου: https://unaettie.com/en-us/pz/charlson.php?utm_source=chatgpt.com)", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale (Βοηθεια Υπολογισμου: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com)", min_value=0, max_value=17, value=5)
 
-# --- PASE: εμφάνιση μόνο για ηλικιωμένους (fixed threshold = 65) ---
-pase_default = int(df["pase_score"].mean()) if "pase_score" in df.columns else 100
-pase_age_threshold = 65  # σταθερή τιμή αντί για επιλογή στο sidebar
+# καλύτερος τρόπος για default PASE
+if "pase_score" in df.columns and "age" in df.columns:
+    non_elder_pase = df.loc[df["age"] < 65, "pase_score"].dropna()
+    if not non_elder_pase.empty:
+        pase_default = int(non_elder_pase.median())
+    else:
+        pase_default = int(df["pase_score"].median())
+elif "pase_score" in df.columns:
+    pase_default = int(df["pase_score"].median())
+else:
+    pase_default = 100  # fallback
+
+pase_age_threshold = 65  # fixed
 
 if age >= pase_age_threshold:
     st.markdown("### PASE Score (Physical Activity Scale for the Elderly)")
@@ -89,8 +99,19 @@ if age >= pase_age_threshold:
 - Online βοηθητικό εργαλείο: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com
         """)
 else:
+    # για <65: όχι PASE required — χρησιμοποιούμε πιο κατάλληλο default και ενημερώνουμε τον χρήστη
     pase_score = pase_default
-    st.info(f"PASE δεν απαιτείται για ηλικίες < {pase_age_threshold}. Χρησιμοποιείται προεπιλεγμένη τιμή: {pase_score}")
+
+    st.info(
+        "Για ηλικίες < 65, το PASE δεν απαιτείται. Η προεπιλεγμένη τιμή υπολογίζεται ως εξής: "
+        "αν υπάρχουν εγγραφές με ηλικία <65, χρησιμοποιείται η διάμεσος (median) των PASE αυτής της υποομάδας· "
+        "αλλιώς χρησιμοποιείται η διάμεσος του συνόλου· αν δεν υπάρχει PASE στο dataset, χρησιμοποιείται fallback=100. "
+        f"Επιλεγμένη τιμή: {pase_score}."
+    )
+
+    # Προαιρετικό: επιτρέπουμε σε μη-ηλικιωμένους να εισάγουν χειροκίνητα PASE
+    if st.checkbox("Θέλω να εισάγω χειροκίνητα PASE (ηλικία <65)"):
+        pase_score = st.number_input("PASE Score (0–400)", min_value=0, max_value=400, value=pase_score)
 
 # Εισαγωγή επιπλέον τιμών που απαιτούνται πριν το mapping (μεταφέρθηκαν ΕΔΩ)
 social_support = st.selectbox(
