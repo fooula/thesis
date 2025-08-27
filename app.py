@@ -194,6 +194,44 @@ if st.button("🔮 Υπολογισμός Χρόνου Αποκατάσταση�
     ax.legend()
     st.pyplot(fig)
 
+# Εισαγωγή επιπλέον τιμών που λείπουν (αποφεύγει NameError στο mapping)
+social_support = st.selectbox(
+    "Κοινωνική υποστήριξη",
+    list(social_support_map.keys()),
+    index=1
+)
+
+fracture_type = st.selectbox(
+    "Τύπος κατάγματος",
+    list(fracture_type_map.keys()),
+    index=0
+)
+
+displacement = st.selectbox(
+    "Μετατόπιση κατάγματος;",
+    list(displacement_map.keys()),
+    index=0
+)
+
+fracture_stability = st.selectbox(
+    "Σταθερότητα κατάγματος",
+    list(fracture_stability_map.keys()),
+    index=0
+)
+
+operative_treatment = st.selectbox(
+    "Εγχειρητική/Επαμβατική θεραπεία;",
+    list(operative_treatment_map.keys()),
+    index=0
+)
+
+immobilization_days = st.number_input(
+    "Ημέρες ακινητοποίησης",
+    min_value=0,
+    max_value=180,
+    value=14
+)
+
 
 
 
