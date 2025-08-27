@@ -38,12 +38,6 @@ with st.sidebar.expander("❓ Συχνές Ερωτήσεις / Βοήθεια")
     - Χρησιμοποιείται κυρίως σε ηλικιωμένους για την εκτίμηση της συνολικής κατάστασης υγείας.
     - [Rolfson DB, et al. Age Ageing. 2006](https://pubmed.ncbi.nlm.nih.gov/16641176/)
 
-- **PASE Score:**
-    - Physical Activity Scale for the Elderly (0-400). Κλίμακα που μετρά τη φυσική δραστηριότητα σε ηλικιωμένους, λαμβάνοντας υπόψη εργασία, άσκηση και καθημερινές δραστηριότητες.
-    - Υψηλότερη τιμή σημαίνει περισσότερη φυσική δραστηριότητα και καλύτερη λειτουργικότητα.
-    - Χρησιμοποιείται για την αξιολόγηση της φυσικής κατάστασης και την πρόβλεψη της αποκατάστασης.
-    - [Washburn RA, et al. J Clin Epidemiol. 1993](https://pubmed.ncbi.nlm.nih.gov/8410095/)
-
 - **Displacement:**
     - Μετατόπιση κατάγματος (0 = όχι, 1 = ναι). Η παρουσία μετατόπισης σχετίζεται με μεγαλύτερη βαρύτητα κάκωσης και συχνά απαιτεί πιο επιθετική θεραπεία.
     - [Müller ME, et al. AO classification of fractures. Injury. 1990](https://pubmed.ncbi.nlm.nih.gov/2221851/)
@@ -73,9 +67,9 @@ osteoporosis = st.selectbox("Οστεοπόρωση", ["Όχι", "Ναι"])
 charlson_index = st.number_input("Charlson Comorbidity Index (Βοηθεια Υπολογισμου: https://unaettie.com/en-us/pz/charlson.php?utm_source=chatgpt.com)", min_value=0, max_value=10, value=2)
 edmonton_frail_scale = st.number_input("Edmonton Frail Scale (Βοηθεια Υπολογισμου: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com)", min_value=0, max_value=17, value=5)
 
-# --- PASE: εμφάνιση μόνο για ηλικιωμένους με δυνατότητα threshold στο sidebar και βοήθεια ---
+# --- PASE: εμφάνιση μόνο για ηλικιωμένους (fixed threshold = 65) ---
 pase_default = int(df["pase_score"].mean()) if "pase_score" in df.columns else 100
-pase_age_threshold = st.sidebar.number_input("Εμφάνιση PASE για ηλικίες ≥", min_value=18, max_value=100, value=65)
+pase_age_threshold = 65  # σταθερή τιμή αντί για επιλογή στο sidebar
 
 if age >= pase_age_threshold:
     st.markdown("### PASE Score (Physical Activity Scale for the Elderly)")
@@ -92,7 +86,7 @@ if age >= pase_age_threshold:
 - Το PASE μετρά τη φυσική δραστηριότητα σε ηλικιωμένους (κλίμακα 0–400).
 - Αν έχετε επίσημο αποτέλεσμα, εισάγετέ το χειροκίνητα.
 - Ενδεικτικές κατηγορίες: Χαμηλή <100, Μέτρια 100–200, Υψηλή >200.
-- Online βοηθητικό εργαλείο: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com (ή άλλοι calculators/ερωτηματολόγια που χρησιμοποιήσατε στη μελέτη).
+- Online βοηθητικό εργαλείο: https://qxmd.com/calculate/calculator_595/edmonton-frail-scale?utm_source=chatgpt.com
         """)
 else:
     pase_score = pase_default
